@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% import "_form.html" as f %}
+
+{% block headerinfo %}
+  модель: <b>{{ model_name }}</b> · ROC-AUC {{ roc_auc }} · порог {{ threshold }}
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h2>Что это</h2>
+    <p style="margin:0">Введите данные клиента - модель оценит вероятность того, что он уйдёт
+    к конкуренту, объяснит, какие именно характеристики повышают риск, и рассчитает,
+    какое предложение снизит его сильнее всего.</p>
+    <p class="muted" style="margin:10px 0 0">Поля уже заполнены профилем заведомо рискованного
+    клиента - можно сразу нажать кнопку внизу.</p>
+  </div>
+
+  {{ f.customer_form(choices, values) }}
+{% endblock %}

@@ -1,0 +1,68 @@
+{# Макрос формы: используется и на главной, и на странице результата,
+   чтобы можно было тут же поменять параметры и пересчитать. #}
+{% macro field(name, label, choices, values) %}
+  <div>
+    <label for="{{ name }}">{{ label }}</label>
+    <select id="{{ name }}" name="{{ name }}">
+      {% for opt in choices[name] %}
+        <option value="{{ opt }}" {% if values[name]|string == opt %}selected{% endif %}>{{ opt }}</option>
+      {% endfor %}
+    </select>
+  </div>
+{% endmacro %}
+
+{% macro number(name, label, values, step) %}
+  <div>
+    <label for="{{ name }}">{{ label }}</label>
+    <input id="{{ name }}" name="{{ name }}" type="number" step="{{ step }}" value="{{ values[name] }}" required>
+  </div>
+{% endmacro %}
+
+{% macro customer_form(choices, values) %}
+<form method="post" action="/predict">
+  <div class="card">
+    <h2>Клиент</h2>
+    <div class="grid">
+      {{ field('gender', 'Пол', choices, values) }}
+      <div>
+        <label for="SeniorCitizen">Пенсионер</label>
+        <select id="SeniorCitizen" name="SeniorCitizen">
+          <option value="0" {% if values['SeniorCitizen']|int == 0 %}selected{% endif %}>Нет</option>
+          <option value="1" {% if values['SeniorCitizen']|int == 1 %}selected{% endif %}>Да</option>
+        </select>
+      </div>
+      {{ field('Partner', 'Есть партнёр', choices, values) }}
+      {{ field('Dependents', 'Есть иждивенцы', choices, values) }}
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Договор и оплата</h2>
+    <div class="grid">
+      {{ number('tenure', 'Срок обслуживания, мес.', values, '1') }}
+      {{ field('Contract', 'Тип контракта', choices, values) }}
+      {{ field('PaymentMethod', 'Способ оплаты', choices, values) }}
+      {{ field('PaperlessBilling', 'Электронный счёт', choices, values) }}
+      {{ number('MonthlyCharges', 'Ежемесячный платёж, у.е.', values, '0.05') }}
+      {{ number('TotalCharges', 'Сумма всех платежей, у.е.', values, '0.05') }}
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Подключённые услуги</h2>
+    <div class="grid">
+      {{ field('PhoneService', 'Телефония', choices, values) }}
+      {{ field('MultipleLines', 'Несколько линий', choices, values) }}
+      {{ field('InternetService', 'Интернет', choices, values) }}
+      {{ field('OnlineSecurity', 'Онлайн-защита', choices, values) }}
+      {{ field('OnlineBackup', 'Облачный бэкап', choices, values) }}
+      {{ field('DeviceProtection', 'Защита устройства', choices, values) }}
+      {{ field('TechSupport', 'Техподдержка', choices, values) }}
+      {{ field('StreamingTV', 'ТВ-стриминг', choices, values) }}
+      {{ field('StreamingMovies', 'Онлайн-кинотеатр', choices, values) }}
+    </div>
+  </div>
+
+  <button type="submit">Рассчитать риск оттока</button>
+</form>
+{% endmacro %}

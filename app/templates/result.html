@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% import "_form.html" as f %}
+
+{% block headerinfo %}
+  модель: <b>{{ r.model_name }}</b> · порог тревоги {{ (r.threshold * 100)|round(0)|int }}%
+{% endblock %}
+
+{% block content %}
+  {% set color = 'var(--bad)' if r.risk_level == 'высокий' else ('var(--warn)' if r.risk_level == 'средний' else 'var(--ok)') %}
+
+  <div class="card">
+    <h2>Результат</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:22px;align-items:center">
+      <div style="font-size:46px;font-weight:700;color:{{ color }};line-height:1">{{ r.percent }}%</div>
+      <div>
+        <div style="font-size:17px;font-weight:600">Риск оттока: {{ r.risk_level }}</div>
+        <div class="muted">
+          {% if r.will_churn %}
+            Вероятность выше порога {{ (r.threshold * 100)|round(0)|int }}% - клиента нужно взять в работу.
+          {% else %}
+            Вероятность ниже порога {{ (r.threshold * 100)|round(0)|int }}% - срочных действий не требуется.
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;position:relative;height:12px;background:#131920;border-radius:8px;overflow:hidden">
+      <div style="height:100%;width:{{ r.percent }}%;background:{{ color }}"></div>
+    </div>
+    <div style="position:relative;height:16px">
+      <div style="position:absolute;left:{{ (r.threshold * 100)|round(0)|int }}%;top:0;
+                  transform:translateX(-50%);font-size:11px;color:var(--muted)">
+        ▲ порог
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Объяснение для менеджера</h2>
+    {% for para in explanation.text.split('\n\n') %}
+      <p style="margin:0 0 10px">{{ para }}</p>
+    {% endfor %}
+    <div class="muted" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)">
+      Текст сгенерирован: <b>{{ explanation.source }}</b>.
+      Все числа в нём посчитаны ML-моделью, языковая модель их только пересказывает.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Что повышает риск именно у этого клиента</h2>
+    {% if r.drivers %}
+    <table>
+      <tr><th>Характеристика</th><th>Значение</th><th>Вклад в риск</th></tr>
+      {% for d in r.drivers %}
+      <tr>
+        <td>{{ d.feature_ru }}</td>
+        <td>{{ d.value }}</td>
+        <td style="color:{{ 'var(--bad)' if d.effect > 0 else 'var(--ok)' }}">
+          {{ '%+.1f'|format(d.effect * 100) }} п.п.
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    <p class="muted" style="margin:12px 0 0">Как считается: значение поля заменяется на типичное
+    по базе, и модель спрашивается заново. Насколько упала вероятность - таков вклад поля.</p>
+    {% else %}
+    <p class="muted" style="margin:0">Профиль клиента близок к типичному, ярких факторов риска нет.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Сценарии удержания</h2>
+    {% if r.actions %}
+    <table>
+      <tr><th>Предложение</th><th>Риск станет</th><th>Снижение</th></tr>
+      {% for a in r.actions %}
+      <tr>
+        <td>{{ a.action }}</td>
+        <td>{{ (a.new_proba * 100)|round(1) }}%</td>
+        <td style="color:var(--ok)">−{{ (a.delta * 100)|round(1) }} п.п.</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <p class="muted" style="margin:12px 0 0">Это расчёт «что если»: мы меняем один параметр
+    клиента и заново прогоняем его через модель.</p>
+    {% else %}
+    <p class="muted" style="margin:0">Рычагов, снижающих риск, не найдено.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Изменить данные и пересчитать</h2>
+    <p class="muted" style="margin:0 0 4px">Форма заполнена текущим клиентом.</p>
+  </div>
+  {{ f.customer_form(choices, values) }}
+  <p class="muted"><a href="/">← Вернуться к профилю по умолчанию</a></p>
+{% endblock %}

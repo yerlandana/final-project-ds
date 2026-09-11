@@ -1,0 +1,24 @@
+# Данные и анализ
+pandas==2.3.3
+numpy==2.3.5
+scikit-learn==1.7.2
+xgboost==3.4.1
+
+# Визуализация
+matplotlib==3.10.6
+seaborn==0.13.2
+
+# Сохранение модели
+joblib==1.5.2
+
+# Веб-приложение
+fastapi==0.141.1
+uvicorn==0.52.4
+jinja2==3.1.6
+python-multipart==0.0.32
+
+# AI-часть (запросы к LLM API)
+requests==2.32.5
+
+# Ноутбук
+notebook==7.4.5

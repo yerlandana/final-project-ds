@@ -1,0 +1,125 @@
+{
+  "dataset": {
+    "n_train": 5616,
+    "n_test": 1405,
+    "churn_rate": 0.2644
+  },
+  "ablation_feature_engineering": {
+    "с новыми признаками": {
+      "roc_auc_mean": 0.8482000247888797,
+      "roc_auc_std": 0.01606653022863075
+    },
+    "только исходные": {
+      "roc_auc_mean": 0.8458140502593601,
+      "roc_auc_std": 0.015376196567719116
+    }
+  },
+  "cv_comparison": [
+    {
+      "model": "Baseline: LogisticRegression",
+      "ROC-AUC": 0.8482,
+      "ROC-AUC std": 0.0161,
+      "PR-AUC": 0.6592,
+      "F1": 0.6386,
+      "Recall": 0.8088,
+      "Precision": 0.5279
+    },
+    {
+      "model": "RandomForest",
+      "ROC-AUC": 0.8441,
+      "ROC-AUC std": 0.0179,
+      "PR-AUC": 0.6545,
+      "F1": 0.6305,
+      "Recall": 0.7044,
+      "Precision": 0.5709
+    },
+    {
+      "model": "XGBoost",
+      "ROC-AUC": 0.8378,
+      "ROC-AUC std": 0.0191,
+      "PR-AUC": 0.6467,
+      "F1": 0.625,
+      "Recall": 0.7461,
+      "Precision": 0.5378
+    }
+  ],
+  "tuning": {
+    "LogisticRegression (tuned)": {
+      "cv_roc_auc": 0.8482,
+      "best_params": {
+        "model__C": 1.0,
+        "model__penalty": "l2",
+        "model__solver": "lbfgs"
+      }
+    },
+    "XGBoost (tuned)": {
+      "cv_roc_auc": 0.8497,
+      "best_params": {
+        "model__colsample_bytree": 0.8,
+        "model__learning_rate": 0.02,
+        "model__max_depth": 2,
+        "model__min_child_weight": 5,
+        "model__n_estimators": 300,
+        "model__subsample": 0.8
+      }
+    }
+  },
+  "selected_model": "XGBoost (tuned)",
+  "baseline_test": {
+    "roc_auc": 0.8416,
+    "f1_at_0.5": 0.6243
+  },
+  "final_test": {
+    "roc_auc": 0.8426,
+    "pr_auc": 0.6605,
+    "threshold": 0.64,
+    "recall": 0.6478,
+    "precision": 0.6101,
+    "f1": 0.6284,
+    "profit_at_best_threshold": 4150.0,
+    "profit_at_0.5": 3140.0
+  },
+  "capacity": [
+    {
+      "доля базы": "5%",
+      "клиентов обзвонили": 70,
+      "из них реально ушли": 60,
+      "precision@k": 0.857,
+      "lift": 3.24,
+      "охват оттока (recall)": 0.161
+    },
+    {
+      "доля базы": "10%",
+      "клиентов обзвонили": 140,
+      "из них реально ушли": 100,
+      "precision@k": 0.714,
+      "lift": 2.7,
+      "охват оттока (recall)": 0.269
+    },
+    {
+      "доля базы": "20%",
+      "клиентов обзвонили": 281,
+      "из них реально ушли": 186,
+      "precision@k": 0.662,
+      "lift": 2.5,
+      "охват оттока (recall)": 0.5
+    }
+  ],
+  "top_features": {
+    "Contract_Month-to-month": 0.30219998955726624,
+    "OnlineSecurity_No": 0.11540000140666962,
+    "TechSupport_No": 0.07850000262260437,
+    "InternetService_Fiber optic": 0.057500001043081284,
+    "PaymentMethod_Electronic check": 0.0471000000834465,
+    "is_new": 0.0421999990940094,
+    "Contract_One year": 0.041999999433755875,
+    "Contract_Two year": 0.03959999978542328,
+    "InternetService_No": 0.03009999915957451,
+    "tenure": 0.026399999856948853,
+    "MonthlyCharges": 0.018799999728798866,
+    "StreamingMovies_Yes": 0.015399999916553497,
+    "PaperlessBilling_No": 0.014800000004470348,
+    "StreamingTV_Yes": 0.014100000262260437,
+    "PaperlessBilling_Yes": 0.014100000262260437
+  }
+}
